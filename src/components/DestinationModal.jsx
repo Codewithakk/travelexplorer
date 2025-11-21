@@ -12,9 +12,9 @@ const DestinationModal = ({ photo, isOpen, onClose }) => {
 
   const modalVariants = {
     hidden: { opacity: 0, scale: 0.8, y: 50 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
+    visible: {
+      opacity: 1,
+      scale: 1,
       y: 0,
       transition: {
         type: "spring",
@@ -22,9 +22,9 @@ const DestinationModal = ({ photo, isOpen, onClose }) => {
         stiffness: 500
       }
     },
-    exit: { 
-      opacity: 0, 
-      scale: 0.8, 
+    exit: {
+      opacity: 0,
+      scale: 0.8,
       y: 50,
       transition: {
         duration: 0.2
@@ -40,19 +40,20 @@ const DestinationModal = ({ photo, isOpen, onClose }) => {
           initial="hidden"
           animate="visible"
           exit="hidden"
+          // Ensure the backdrop covers the whole screen and center the modal
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
           onClick={onClose}
         >
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-          
-          {/* Modal */}
+
+          {/* Modal Container: Added overflow-y-auto and kept max-h-[90vh] */}
           <motion.div
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative bg-white rounded-2xl overflow-hidden max-w-4xl max-h-[90vh] w-full shadow-2xl"
+            className="relative bg-white rounded-2xl max-w-4xl max-h-[90vh] w-full shadow-2xl overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -63,15 +64,18 @@ const DestinationModal = ({ photo, isOpen, onClose }) => {
               <X className="h-6 w-6" />
             </button>
 
-            <div className="flex flex-col lg:flex-row">
+            {/* Content Layout: flex-col for mobile, flex-row for lg screens and up */}
+            <div className="flex flex-col lg:flex-row h-full">
+
               {/* Image Section */}
-              <div className="lg:w-2/3 relative">
+              <div className="lg:w-2/3 relative flex-shrink-0">
                 <img
                   src={photo.urls.regular}
                   alt={photo.alt_description}
-                  className="w-full h-96 lg:h-[600px] object-cover"
+                  // Reduced height on mobile (h-64) to leave room for details
+                  className="w-full h-64 sm:h-96 lg:h-[600px] object-cover"
                 />
-                
+
                 {/* Image overlay with basic info */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
                   <h3 className="text-2xl font-display font-semibold text-white mb-2">
@@ -84,9 +88,10 @@ const DestinationModal = ({ photo, isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Details Section */}
-              <div className="lg:w-1/3 p-6 lg:p-8">
+              {/* Details Section: Added overflow-y-auto and flex-grow for scrolling on small screens */}
+              <div className="lg:w-1/3 p-6 lg:p-8 overflow-y-auto flex-grow">
                 <div className="space-y-6">
+
                   {/* Photographer Info */}
                   <div className="flex items-center space-x-3">
                     <div className="flex items-center justify-center w-12 h-12 bg-primary-100 rounded-full">
@@ -104,7 +109,6 @@ const DestinationModal = ({ photo, isOpen, onClose }) => {
                       <Heart className="h-5 w-5 text-red-500" />
                       <span className="font-medium">{photo.likes?.toLocaleString() || '0'} likes</span>
                     </div>
-
                     {photo.views && (
                       <div className="flex items-center space-x-2 text-gray-600">
                         <ExternalLink className="h-5 w-5" />
@@ -151,7 +155,7 @@ const DestinationModal = ({ photo, isOpen, onClose }) => {
                       <ExternalLink className="h-5 w-5" />
                       <span>View on Unsplash</span>
                     </a>
-                    
+
                     <a
                       href={`${photo.links?.download}?force=true`}
                       target="_blank"
